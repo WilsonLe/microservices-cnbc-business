@@ -1,0 +1,52 @@
+# serverless.yml
+
+service: cnbc-business
+
+frameworkVersion: "3"
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-2
+  profile: default
+  logRetentionInDays: 1
+  versionFunctions: false
+  timeout: 30
+  	
+  ecr:
+    images:
+      cnbc-business:
+        path: ./
+        file: Dockerfile
+        platform: linux/amd64
+
+  vpc:
+    securityGroupIds:
+      - ${env:LAMBDA_SECURITY_GROUP_ID_0}
+    subnetIds:
+      - ${env:LAMBDA_SUBNET_ID_0}
+      - ${env:LAMBDA_SUBNET_ID_1}
+      - ${env:LAMBDA_SUBNET_ID_2}
+
+  environment:
+    DATABASE_HOST: ${env:DB_HOST}
+    DATABASE_PORT: ${env:DB_PORT}
+    DATABASE_NAME: ${env:DB_NAME}
+    DATABASE_USERNAME: ${env:DB_USER}
+    DATABASE_PASSWORD: ${env:DB_PASSWORD}
+
+package:
+  patterns:
+    - "src/**"
+    - "package.json"
+    - "requirements.txt"
+
+functions:
+  business:
+    image:
+      name: cnbc-business
+    events:
+      - schedule:
+          rate: rate(5 minutes)
+          enabled: true
