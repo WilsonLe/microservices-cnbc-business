@@ -21,14 +21,6 @@ provider:
         file: Dockerfile
         platform: linux/amd64
 
-  vpc:
-    securityGroupIds:
-      - ${env:LAMBDA_SECURITY_GROUP_ID_0}
-    subnetIds:
-      - ${env:LAMBDA_SUBNET_ID_0}
-      - ${env:LAMBDA_SUBNET_ID_1}
-      - ${env:LAMBDA_SUBNET_ID_2}
-
   environment:
     DATABASE_HOST: ${env:DB_HOST}
     DATABASE_PORT: ${env:DB_PORT}
